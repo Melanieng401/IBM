@@ -75,16 +75,27 @@ def get_pie_chart(entered_site):
               Input(component_id="payload-slider", component_property="value")])
 
 def get_scatter_chart(entered_site, entered_payload):
-    filtered_df_scatter = spacex_df[spacex_df['Payload Mass (kg)'].between(payload[0],payload[1])]
+    filtered_df_scatter = spacex_df[spacex_df['Payload Mass (kg)'].between(payload-slider[0],payload-slider[1])]
     if entered_site == 'ALL':
-        scatterplot = px.scatter(filtered_data_scatter, x="Payload Mass (kg)", y="class", 
-        color="Booster Version Category")
-        return scatterplot
+        low, high = payload_slider
+        df  = spacex_df
+        filter = (df['Payload Mass (kg)'] > low) & (df['Payload Mass (kg)'] < high)
+        fig = px.scatter(
+            df[filter], x="Payload Mass (kg)", y="class",
+            color="Booster Version",
+            size='Payload Mass (kg)',
+            hover_data=['Payload Mass (kg)'])
     else:
-        filtered_df_scatter = filtered_data_scatter[filtered_data_scatter['Launch Site']== entered_site]
-        scatterplot = px.scatter(filtered_data_scatter, x="Payload Mass (kg)", y="class", 
-        color="Booster Version Category")
-        return scatterplot
+        low, high = payload_slider
+        df  = spacex_df.loc[spacex_df['Launch Site'] == site_dropdown]
+        filter = (df['Payload Mass (kg)'] > low) & (df['Payload Mass (kg)'] < high)
+        fig = px.scatter(
+            df[filter], x="Payload Mass (kg)", y="class",
+            color="Booster Version",
+            size='Payload Mass (kg)',
+            hover_data=['Payload Mass (kg)'])
+    return scatterplot
+
 
 
 # Run the app
